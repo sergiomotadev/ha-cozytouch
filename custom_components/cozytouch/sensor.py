@@ -303,7 +303,12 @@ class CozytouchSensor(SensorEntity, CoordinatorEntity):
         self._config_uniq_id = config_uniq_id
         self._last_value: str | None = None
         self._device_uniq_id = config_uniq_id
-        self._attr_name = name
+        # Only set an explicit name when one is provided. Leaving _attr_name
+        # unset lets Home Assistant build the entity name from the
+        # translation_key (and the entity_description fallback), otherwise
+        # every entity would inherit the device name (e.g. "ROOM_0").
+        if name is not None:
+            self._attr_name = name
 
         if value_type:
             self._value_type = value_type
