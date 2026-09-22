@@ -1,6 +1,8 @@
 # Cozytouch
 This is an Atlantic Cozytouch cloud integration. Atlantic use multiple protocols, in my case the protocol is different than the one implemented by official integration (overkiz).
 
+Repository: [sergiomotadev/ha-cozytouch](https://github.com/sergiomotadev/ha-cozytouch)
+
 This has been tested using on : 
   - `Atlantic Naema 2 Micro 25` gas boiler using a `Ǹavilink Radio-Connect 128` thermostat
   - `Atlantic Naema 2 Duo 25` gas boiler using a `Ǹavilink Radio-Connect 128` thermostat
@@ -9,6 +11,7 @@ This has been tested using on :
   - `Takao M3` air conditionning
   - `Kelud 1750W` towel rack
   - `Sauter Asama Connecté II Ventilo 1750W` towel rack
+  - `Thermor Áurea Duo R32 11` air-to-water heat pump + DHW (hydraulic module `024252`)
 
 A special mapping needs to be done for each model type, feel free to create an issue to help supporting your device.
 
@@ -19,13 +22,19 @@ You can install it using HACS or manually.
 
 #### With HACS
 
-[![Add HACS repository.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=gduteil&repository=cozytouch&category=integration)
+[![Add HACS repository.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergiomotadev&repository=ha-cozytouch&category=integration)
 
 More informations about HACS [here](https://hacs.xyz/).
+
+You can also add it manually as a custom repository in HACS: `HACS -> Integrations -> ... -> Custom repositories`, then add `https://github.com/sergiomotadev/ha-cozytouch` with category `Integration`.
 
 #### Manually
 
 Clone this repository and copy `custom_components/cozytouch` to your Home Assistant config durectory (ex : `config/custom_components/cozytouch`)
+
+```
+git clone https://github.com/sergiomotadev/ha-cozytouch.git
+```
 
 Restart Home Assistant.
 
