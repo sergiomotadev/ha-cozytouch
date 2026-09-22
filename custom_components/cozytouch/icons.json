@@ -1,0 +1,58 @@
+{
+    "entity": {
+        "climate": {
+            "air_conditioner": {
+                "state_attributes": {
+                    "fan_mode": {
+                        "state": {
+                            "off": "mdi:fan-off",
+                            "on": "mdi:fan",
+                            "low": "mdi:fan-speed-1",
+                            "medium": "mdi:fan-speed-2",
+                            "high": "mdi:fan-speed-3",
+                            "auto": "mdi:fan-auto",
+                            "quiet": "mdi:fan-minus"
+                        }
+                    },
+                    "swing_mode": {
+                        "state": {
+                            "up": "mdi:arrow-up",
+                            "middle_up": "mdi:arrow-top-right",
+                            "middle_down": "mdi:arrow-bottom-right",
+                            "down": "mdi:arrow-down"
+                        }
+                    },
+                    "preset_mode": {
+                        "state": {
+                            "basic": "mdi:thermometer",
+                            "prog": "mdi:clock-outline",
+                            "override": "mdi:timer-sand-complete"
+                        }
+                    }
+                }
+            },
+            "central_heating": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "basic": "mdi:thermostat",
+                            "prog": "mdi:thermostat-auto",
+                            "override": "mdi:thermostat-cog"
+                        }
+                    }
+                }
+            },
+            "heat": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "basic": "mdi:thermostat",
+                            "prog": "mdi:thermostat-auto",
+                            "override": "mdi:thermostat-cog"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
