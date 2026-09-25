@@ -68,6 +68,16 @@ def get_capability_infos(modelInfos: dict, capabilityId: int, capabilityValue: s
             capability.pop("lowestValueCapabilityId")
             capability.pop("highestValueCapabilityId")
             capability["icon"] = "mdi:heat-pump"
+
+            # Reversible heat pumps with a dedicated cooling setpoint: the
+            # target capability (17/18) is only a read-back of the active
+            # setpoint and writes to it are overwritten by the device.
+            if "targetCoolCapabilityId" in modelInfos:
+                capability["targetCoolCapabilityId"] = modelInfos[
+                    "targetCoolCapabilityId"
+                ]
+                capability["lowestCoolValueCapabilityId"] = 162
+                capability["highestCoolValueCapabilityId"] = 163
         else:
             capability["name"] = "heat"
 

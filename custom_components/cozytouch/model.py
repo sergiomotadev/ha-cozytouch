@@ -234,6 +234,11 @@ def get_model_infos(
             0: HEATING_MODE_MANUAL,
         }
 
+        # In cooling mode the setpoint written by the Cozytouch app is
+        # capability 177; capability 17 only reports the active setpoint
+        # rounded to the degree, and writing it is reverted by the device.
+        modelInfos["targetCoolCapabilityId"] = 177
+
     elif (modelId >= 557 and modelId <= 561) or modelId == 1734:
         name = "Air Conditioner "
         if zoneName is not None:

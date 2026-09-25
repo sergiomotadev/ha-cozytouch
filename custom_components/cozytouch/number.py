@@ -158,6 +158,7 @@ class TemperatureAdjustmentNumber(NumberEntity, CozytouchSensor):
             self._capability["capabilityId"],
             str(new_value),
         )
+        await self.coordinator.async_request_refresh()
 
 
 class TemperaturePercentAdjustmentNumber(NumberEntity, CozytouchSensor):
