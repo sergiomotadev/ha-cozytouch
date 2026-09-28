@@ -69,9 +69,20 @@ def get_capability_infos(modelInfos: dict, capabilityId: int, capabilityValue: s
             capability.pop("highestValueCapabilityId")
             capability["icon"] = "mdi:heat-pump"
 
-            # Reversible heat pumps with a dedicated cooling setpoint: the
-            # target capability (17/18) is only a read-back of the active
-            # setpoint and writes to it are overwritten by the device.
+            # Heat pumps with dedicated user setpoints: the target capability
+            # (17/18) is only a read-back of the active setpoint and writes
+            # to it are overwritten by the device.
+            if "targetHeatCapabilityId" in modelInfos:
+                capability["targetCapabilityId"] = modelInfos[
+                    "targetHeatCapabilityId"
+                ]
+                capability["lowestValueCapabilityId"] = 160
+                capability["highestValueCapabilityId"] = 161
+
+            for key in ("runningModeCapabilityId", "hvacActionCapabilityId"):
+                if key in modelInfos:
+                    capability[key] = modelInfos[key]
+
             if "targetCoolCapabilityId" in modelInfos:
                 capability["targetCoolCapabilityId"] = modelInfos[
                     "targetCoolCapabilityId"
@@ -156,6 +167,25 @@ def get_capability_infos(modelInfos: dict, capabilityId: int, capabilityValue: s
         capability["category"] = "sensor"
         capability["lowestValueCapabilityId"] = 160
         capability["highestValueCapabilityId"] = 161
+
+    elif modelId == 1720 and capabilityId in (44, 45, 46, 57, 58, 59, 60):
+        # Áurea Duo main unit: 44/45/46 are the gas counters (always 0 on a
+        # heat pump). Electric counters are 57 heat / 58 cool / 59 DHW in Wh
+        # and 60 total in kWh (60 = 57 + 58 + 59).
+        if capabilityId in (44, 45, 46):
+            return {}
+
+        capability["name"] = {
+            57: "ch_power_consumption",
+            58: "cooling_power_consumption",
+            59: "dhw_power_consumption",
+            60: "total_power_consumption",
+        }[capabilityId]
+        capability["type"] = "energy"
+        capability["displayed_unit_of_measurement"] = UnitOfEnergy.KILO_WATT_HOUR
+        capability["category"] = "sensor"
+        if capabilityId == 60:
+            capability["display_factor"] = 1.0
 
     elif capabilityId == 44:
         capability["name"] = "ch_power_consumption"

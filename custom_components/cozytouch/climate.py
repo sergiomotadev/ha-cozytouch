@@ -7,6 +7,7 @@ import logging
 from homeassistant.components.climate import (
     ClimateEntity,
     ClimateEntityFeature,
+    HVACAction,
     HVACMode,
 )
 from homeassistant.components.climate.const import (
@@ -28,6 +29,11 @@ from .sensor import CozytouchSensor
 _LOGGER = logging.getLogger(__name__)
 
 FAN_QUIET = "quiet"
+
+# ROOM1_HeatCoolOnGoing values
+HVAC_ACTIONS = {0: HVACAction.IDLE, 1: HVACAction.HEATING, 2: HVACAction.COOLING}
+# ROOM1_ThermostatOperatingMode value when cooling
+RUNNING_MODE_COOL = 3
 
 PRESET_BASIC = "basic"
 PRESET_PROG = "prog"
@@ -199,12 +205,7 @@ class CozytouchClimate(ClimateEntity, CozytouchSensor):
             HVACMode.FAN_ONLY
         ):
             self._native_value = None
-        elif (
-            self._attr_hvac_mode in (
-                HVACMode.COOL,
-                HVACMode.DRY )
-            and "targetCoolCapabilityId" in self._capability
-        ):
+        elif self._cool_setpoint_active():
             self._native_value = float(
                 self.coordinator.get_capability_value(
                     self._capability["targetCoolCapabilityId"]
@@ -226,10 +227,7 @@ class CozytouchClimate(ClimateEntity, CozytouchSensor):
 
         # Lowest adjustment value
         if (
-            self._attr_hvac_mode in (
-                HVACMode.COOL,
-                HVACMode.DRY,
-                HVACMode.AUTO )
+            self._cool_limits_active()
             and "lowestCoolValueCapabilityId" in self._capability
         ):
             lowestValueId = self._capability.get("lowestCoolValueCapabilityId", None)
@@ -244,10 +242,7 @@ class CozytouchClimate(ClimateEntity, CozytouchSensor):
 
         # Highest adjustment value
         if (
-            self._attr_hvac_mode in (
-                HVACMode.COOL,
-                HVACMode.DRY,
-                HVACMode.AUTO )
+            self._cool_limits_active()
             and "highestCoolValueCapabilityId" in self._capability
         ):
             highestValueId = self._capability["highestCoolValueCapabilityId"]
@@ -354,6 +349,40 @@ class CozytouchClimate(ClimateEntity, CozytouchSensor):
 
         self.async_write_ha_state()
 
+    def _cool_setpoint_active(self) -> bool:
+        """Return True if the cooling setpoint is the one in use."""
+        if "targetCoolCapabilityId" not in self._capability:
+            return False
+        if self._attr_hvac_mode in (HVACMode.COOL, HVACMode.DRY):
+            return True
+        # In Auto, follow the mode the device is actually running
+        runningModeId = self._capability.get("runningModeCapabilityId")
+        if self._attr_hvac_mode == HVACMode.AUTO and runningModeId:
+            return (
+                int(self.coordinator.get_capability_value(runningModeId))
+                == RUNNING_MODE_COOL
+            )
+        return False
+
+    def _cool_limits_active(self) -> bool:
+        """Return True if the cooling setpoint limits apply."""
+        if "runningModeCapabilityId" in self._capability:
+            return self._cool_setpoint_active()
+        return self._attr_hvac_mode in (HVACMode.COOL, HVACMode.DRY, HVACMode.AUTO)
+
+    @property
+    def hvac_action(self) -> HVACAction | None:
+        """Return what the device is currently doing."""
+        actionId = self._capability.get("hvacActionCapabilityId")
+        if not actionId:
+            return None
+        if self._attr_hvac_mode == HVACMode.OFF:
+            return HVACAction.OFF
+        value = self.coordinator.get_capability_value(actionId, None)
+        if value is None:
+            return None
+        return HVAC_ACTIONS.get(int(value))
+
     @property
     def current_temperature(self):
         """Return current temperature."""
@@ -375,12 +404,7 @@ class CozytouchClimate(ClimateEntity, CozytouchSensor):
             ):
                 await self.async_set_preset_mode(PRESET_OVERRIDE)
 
-            if (
-                self._attr_hvac_mode in (
-                    HVACMode.COOL,
-                    HVACMode.DRY )
-                and "targetCoolCapabilityId" in self._capability
-            ):
+            if self._cool_setpoint_active():
                 await self.coordinator.set_capability_value(
                     self._capability["targetCoolCapabilityId"],
                     str(temperature),

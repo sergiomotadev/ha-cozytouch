@@ -177,6 +177,7 @@
             "central_heating":          { "name": "Central Heating" },
             "ch_power_consumption":     { "name": "CH Power consumption" },
             "condenser_temperature":    { "name": "Condenser Temperature" },
+            "cooling_power_consumption": { "name": "Cooling Power consumption" },
             "dhw_power_consumption":    { "name": "DHW Power consumption" },
             "dhw_pump":                 { "name": "DHW Pump" },
             "dhw_temperature":          { "name": "DHW Temperature" },

@@ -234,10 +234,17 @@ def get_model_infos(
             0: HEATING_MODE_MANUAL,
         }
 
-        # In cooling mode the setpoint written by the Cozytouch app is
-        # capability 177; capability 17 only reports the active setpoint
-        # rounded to the degree, and writing it is reverted by the device.
+        # Setpoints (names from /magellan/productmodels/capabilities):
+        # 17 ROOM1_ControlSetpoint is the setpoint currently applied, computed
+        # by the device (writes to it are reverted). The user setpoints are
+        # 40 ROOM1_SystemHeatSetpoint and 177 ROOM1_SystemCoolSetpoint.
+        modelInfos["targetHeatCapabilityId"] = 40
         modelInfos["targetCoolCapabilityId"] = 177
+        # 181 ROOM1_ThermostatOperatingMode: running mode (0 Off, 3 Cool,
+        # 4 Heat), tells whether Auto is currently heating or cooling.
+        modelInfos["runningModeCapabilityId"] = 181
+        # 153 ROOM1_HeatCoolOnGoing: 0 No, 1 HeatUp, 2 CoolDown.
+        modelInfos["hvacActionCapabilityId"] = 153
 
     elif (modelId >= 557 and modelId <= 561) or modelId == 1734:
         name = "Air Conditioner "

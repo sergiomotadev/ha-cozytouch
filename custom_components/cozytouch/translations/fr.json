@@ -177,6 +177,7 @@
             "central_heating":          { "name": "Chauffage" },
             "ch_power_consumption":     { "name": "Consommation CH" },
             "condenser_temperature":    { "name": "Temperature Condensateur" },
+            "cooling_power_consumption": { "name": "Consommation Froid" },
             "dhw_power_consumption":    { "name": "Consommation ECS" },
             "dhw_pump":                 { "name": "Pompe ECS" },
             "dhw_temperature":          { "name": "Température ECS" },

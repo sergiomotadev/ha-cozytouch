@@ -178,6 +178,7 @@ async def async_setup_entry(
             display_factor = 1.0
             if native_unit_of_measurement == UnitOfEnergy.KILO_WATT_HOUR:
                 display_factor = 0.001
+            display_factor = capability.get("display_factor", display_factor)
 
             sensors.append(
                 CozytouchUnitSensor(
